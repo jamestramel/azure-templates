@@ -1,4 +1,7 @@
 {
+"dnsNameforLBIP": {
+  "value": "loadbalance"
+      },
   "newStorageAccountName": {
     "value": "teststore"
   },
