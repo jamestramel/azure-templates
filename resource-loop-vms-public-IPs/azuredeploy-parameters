@@ -19,5 +19,8 @@
   },
   "vmSize": {
     "value": "Standard_D1"
+  },
+    "imagesku": {
+    "value": "Standard_D1"
   }
 }
