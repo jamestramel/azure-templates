@@ -101,6 +101,7 @@
     "lbID": "[resourceId('Microsoft.Network/loadBalancers',variables('lbName'))]",
     "frontEndIPConfigID": "[concat(variables('lbID'),'/frontendIPConfigurations/LoadBalancerFrontEnd')]",
     "lbPoolID": "[concat(variables('lbID'),'/backendAddressPools/BackendPool1')]",
+    "vmExtensionName":  "dscExtension",
     "lbProbeID": "[concat(variables('lbID'),'/probes/tcpProbe')]"
   },
   "resources": [
