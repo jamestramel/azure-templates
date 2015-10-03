@@ -14,19 +14,6 @@
         "description": "Admin password for VM"
       }
     },
-    "modulesUrl": {
-      "type": "string",
-      "metadata": {
-        "description": "DSC URL"
-      }
-    },
-
-    "configurationFunction": {
-      "type": "string",
-      "metadata": {
-        "description":  "DSC Function"
-      }
-    },
     "newStorageAccountName": {
       "type": "string",
       "metadata": {
@@ -55,14 +42,14 @@
     },
     "vmSize": {
       "type": "string",
-      "allowedValues": [
+          "allowedValues": [
         "Standard_A1",
         "Standard_A2",
         "Standard_A3",
         "Standard_D1",
         "Standard_D2",
         "Standard_D3"
-      ],
+        ],
       "metadata": {
         "description": "Size of the Virtual Machine."
       }
@@ -70,17 +57,11 @@
     "imageSKU": {
       "type": "string",
       "allowedValues": [
-        "2008-R2-SP1",
+         "2008-R2-SP1", 
         "2012-Datacenter"
-      ],
+        ],
       "metadata": {
         "description": "OS Version"
-      }
-    },
-    "dnsNameforLBIP": {
-      "type": "string",
-      "metadata": {
-        "description": "DNS for Load Balancer IP"
       }
     }
   },
@@ -93,16 +74,8 @@
     "subnet1Prefix": "10.0.0.0/24",
     "subnet1Ref": "[concat(variables('vnetID'),'/subnets/', variables('subnet1Name'))]",
     "vmStorageAccountContainerName": "vhds",
-    "imagePublisher": "MicrosoftWindowsServer",
-    "imageOffer": "WindowsServer",
-    "publicIPAddressName": "myPublicIP",
-    "lbName": "myLB",
-    "publicIPAddressID": "[resourceId('Microsoft.Network/publicIPAddresses',variables('publicIPAddressName'))]",
-    "lbID": "[resourceId('Microsoft.Network/loadBalancers',variables('lbName'))]",
-    "frontEndIPConfigID": "[concat(variables('lbID'),'/frontendIPConfigurations/LoadBalancerFrontEnd')]",
-    "lbPoolID": "[concat(variables('lbID'),'/backendAddressPools/BackendPool1')]",
-    "vmExtensionName":  "dscExtension",
-    "lbProbeID": "[concat(variables('lbID'),'/probes/tcpProbe')]"
+    "imagePublisher": "MicrosoftWindowsServer", 
+    "imageOffer": "WindowsServer"
   },
   "resources": [
     {
@@ -144,86 +117,14 @@
     {
       "apiVersion": "2015-05-01-preview",
       "type": "Microsoft.Network/publicIPAddresses",
-      "name": "[variables('publicIPAddressName')]",
-      "location": "[resourceGroup().location]",
+      "name": "[concat('publicIP', copyIndex())]",
+      "location": "[parameters('location')]",
+      "copy": {
+        "name": "publicIPLoop",
+        "count": "[parameters('numberOfInstances')]"
+      },
       "properties": {
-        "dnsSettings": {
-          "domainNameLabel": "[parameters('dnsNameforLBIP')]"
-        },
         "publicIPAllocationMethod": "Dynamic"
-      }
-    },
-    {
-      "apiVersion": "2015-05-01-preview",
-      "type": "Microsoft.Network/loadBalancers",
-      "dependsOn": [
-        "[concat('Microsoft.Network/publicIPAddresses/', variables('publicIPAddressName'))]"
-      ],
-      "location": "[resourceGroup().location]",
-      "name": "[variables('lbName')]",
-      "properties": {
-        "frontendIPConfigurations": [
-          {
-            "name": "LoadBalancerFrontEnd",
-            "properties": {
-              "publicIPAddress": {
-                "id": "[variables('publicIPAddressID')]"
-              }
-            }
-          }
-        ],
-        "backendAddressPools": [
-          {
-            "name": "BackendPool1"
-          }
-        ],
-        "inboundNatRules": [
-          {
-            "name": "RDP-VM",
-            "properties": {
-              "frontendIPConfiguration": {
-                "id": "[variables('frontEndIPConfigID')]"
-              },
-              "protocol": "tcp",
-              "frontendPort": 50001,
-              "backendPort": 3389,
-              "enableFloatingIP": false
-            }
-          }
-        ],
-        "loadBalancingRules": [
-          {
-            "name": "LBRule",
-            "properties": {
-              "frontendIPConfiguration": {
-                "id": "[variables('frontEndIPConfigID')]"
-              },
-              "backendAddressPool": {
-                "id": "[variables('lbPoolID')]"
-              },
-              "protocol": "tcp",
-              "frontendPort": 80,
-              "backendPort": 80,
-              "enableFloatingIP": false,
-              "idleTimeoutInMinutes": 5,
-              "probe": {
-                "id": "[variables('lbProbeID')]"
-              }
-            }
-          }
-        ],
-        "probes": [
-          {
-            "name": "tcpProbe",
-            "properties": {
-              "protocol": "tcp",
-              "port": 80,
-              "intervalInSeconds": "5",
-              "numberOfProbes": "2"
-            }
-          }
-        ]
-
       }
     },
     {
@@ -237,7 +138,7 @@
       },
       "dependsOn": [
         "[concat('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]",
-        "[concat('Microsoft.Network/loadBalancers/', variables('lbName'))]"
+        "[concat('Microsoft.Network/publicIPAddresses/', 'publicIP', copyindex())]"
       ],
       "properties": {
         "ipConfigurations": [
@@ -245,14 +146,12 @@
             "name": "ipconfig1",
             "properties": {
               "privateIPAllocationMethod": "Dynamic",
+              "publicIPAddress": {
+                "id": "[resourceId('Microsoft.Network/publicIPAddresses',concat('publicIP', copyindex()))]"
+              },
               "subnet": {
                 "id": "[variables('subnet1Ref')]"
-              },
-              "loadBalancerBackendAddressPools": [
-                {
-                  "id": "[concat(variables('lbID'), '/backendAddressPools/BackendPool1')]"
-                }
-              ]
+              }
             }
           }
         ]
@@ -279,7 +178,7 @@
           "vmSize": "[parameters('vmSize')]"
         },
         "osProfile": {
-          "computerName": "[concat('vm', copyIndex())]",
+          "computername": "[concat('vm', copyIndex())]",
           "adminUsername": "[parameters('adminUsername')]",
           "adminPassword": "[parameters('adminPassword')]"
         },
@@ -307,33 +206,7 @@
           ]
         }
       }
-    },
-    {
-      "type": "Microsoft.Compute/virtualMachines/extensions",
-      "name": "[concat('myvm', copyIndex(),'/', variables('vmExtensionName'))]",
-      "apiVersion": "2015-05-01-preview",
-      "location": "[parameters('location')]",
-      "copy": {
-        "name": "vmextensionloop",
-        "count": "[parameters('numberOfInstances')]"
-      },
-      "dependsOn": [
-        "[concat('Microsoft.Compute/virtualMachines/', 'myvm', copyIndex())]"
-      ],
-      "properties": {
-        "publisher": "Microsoft.Powershell",
-        "type": "DSC",
-        "typeHandlerVersion": "1.9",
-        "settings": {
-          "ModulesUrl": "[parameters('modulesUrl')]",
-          "SasToken": "",
-          "ConfigurationFunction": "[parameters('configurationFunction')]",
-          "Properties": {
-            "MachineName": "[concat('myvm', copyIndex())]"
-          }
-        },
-        "protectedSettings": null
-      }
     }
   ]
-} 
+}
+
