@@ -175,7 +175,7 @@
                 "id": "backEndIPConfigID"
               },
               "protocol": "tcp",
-              "frontendPort": 5001,
+              "frontendPort": "[int(concat('500', copyindex()))]",
               "backendPort": 3389,
               "enableFloatingIP": false
             }
