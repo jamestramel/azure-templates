@@ -23,13 +23,14 @@
     },
     "numberOfInstances": {
       "type": "int",
-      "defaultValue": 20,
+      "defaultValue": 2,
       "metadata": {
         "description": "Number of VMs to deploy"
       }
     },
     "location": {
       "type": "string",
+      "defaultValue": "East US",
       "allowedValues": [
         "West US",
         "East US"
@@ -40,6 +41,7 @@
     },
     "vmSize": {
       "type": "string",
+      "defaultValue": "Standard_A1",
       "allowedValues": [
         "Standard_A1",
         "Standard_A2",
@@ -51,9 +53,11 @@
       "metadata": {
         "description": "Size of the Virtual Machine."
       }
+
     },
     "imageSKU": {
       "type": "string",
+      "defaultValue": "2008-R2-SP1",
       "allowedValues": [
         "2008-R2-SP1",
         "2012-Datacenter"
@@ -129,11 +133,12 @@
       "type": "Microsoft.Network/publicIPAddresses",
       "name": "[variables('publicIPAddressName')]",
       "location": "[resourceGroup().location]",
+
       "properties": {
         "publicIPAllocationMethod": "Dynamic",
         "dnsSettings": {
           "domainNameLabel": "[parameters('dnsNameforLBIP')]"
-          },
+        }
       }
     },
     {
@@ -175,7 +180,8 @@
                 "id": "backEndIPConfigID"
               },
               "protocol": "tcp",
-              "frontendPort": "[int(concat('500', copyindex()))]",
+              //"frontendPort": "[int(concat('500', copyindex()))]",
+              "frontendPort": 5001,
               "backendPort": 3389,
               "enableFloatingIP": false
             }
