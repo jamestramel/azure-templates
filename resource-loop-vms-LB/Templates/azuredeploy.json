@@ -180,6 +180,7 @@
                 "id": "backEndIPConfigID"
               },
               "protocol": "tcp",
+              //"frontendPort": "[int(concat('500', copyindex()))]",
               "frontendPort": 5001,
               "backendPort": 3389,
               "enableFloatingIP": false
@@ -213,6 +214,7 @@
               },
               "loadBalancerBackendAddressPools": [
                 {
+                  //Add NIC to Backend Address Pool of the LB
                   "id": "[concat(variables('lbID'), '/backendAddressPools/BackendPool1')]"
                 }
               ],
