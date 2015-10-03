@@ -12,7 +12,7 @@
     "value": 2
   },
   "location": {
-    "value": "West US"
+    "value": "East US"
   },
   "vmSize": {
     "value": "Standard_D1"
