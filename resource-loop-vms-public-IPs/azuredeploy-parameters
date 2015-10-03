@@ -1,7 +1,4 @@
 {
-"dnsNameforLBIP": {
-  "value": "loadbalance"
-      },
   "newStorageAccountName": {
     "value": "teststore"
   },
@@ -18,9 +15,6 @@
     "value": "West US"
   },
   "vmSize": {
-    "value": "Standard_D1"
-  },
-    "imagesku": {
     "value": "Standard_D1"
   }
 }
