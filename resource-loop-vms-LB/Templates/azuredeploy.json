@@ -23,7 +23,6 @@
     },
     "numberOfInstances": {
       "type": "int",
-      "defaultValue": 2,
       "metadata": {
         "description": "Number of VMs to deploy"
       }
@@ -89,6 +88,7 @@
     "publicIPAddressID": "[resourceId('Microsoft.Network/publicIPAddresses',variables('publicIPAddressName'))]",
     "lbID": "[resourceId('Microsoft.Network/loadBalancers',variables('lbName'))]",
     "frontEndIPConfigID": "[concat(variables('lbID'),'/frontendIPConfigurations/LoadBalancerFrontEnd')]",
+    "backEndIPConfigID": "[concat(variables('lbID'),'/backendIPConfigurations/LoadBalancerBackEnd')]",
     "lbPoolID": "[concat(variables('lbID'),'/backendAddressPools/BackendPool1')]"
   },
   "resources": [
@@ -150,16 +150,14 @@
       "location": "[resourceGroup().location]",
       "name": "[variables('lbName')]",
       "properties": {
-        "frontendIPConfigurations": [
-          {
-            "name": "LoadBalancerFrontEnd",
-            "properties": {
-              "publicIPAddress": {
-                "id": "[variables('publicIPAddressID')]"
-              }
+        "frontendIPConfigurations": {
+          "name": "LoadBalancerFrontEnd",
+          "properties": {
+            "publicIPAddress": {
+              "id": "[variables('publicIPAddressID')]"
             }
           }
-        ],
+        },
         "backendAddressPools": [
           {
             "name": "BackendPool1"
@@ -167,24 +165,20 @@
         ],
         "inboundNatRules": [
           {
-            "name": "[concat('RDP-VM', copyindex())]",
-            "copy": {
-              "name": "NAT Rule Loop",
-              "count": "[parameters('numberofInstances')]"
-            },
+            "name": "RDP-VM",
             "properties": {
               "frontendIPConfiguration": {
                 "id": "[variables('frontEndIPConfigID')]"
               },
               "backendIPConfiguration": {
-                "id": "backEndIPConfigID"
+                "id": "[variables('backEndIPConfigID')]"
               },
               "protocol": "tcp",
-              //"frontendPort": "[int(concat('500', copyindex()))]",
-              "frontendPort": 5001,
+              "frontendPort": 50001,
               "backendPort": 3389,
               "enableFloatingIP": false
             }
+
 
           }
         ]
@@ -214,13 +208,13 @@
               },
               "loadBalancerBackendAddressPools": [
                 {
-                  //Add NIC to Backend Address Pool of the LB
+
                   "id": "[concat(variables('lbID'), '/backendAddressPools/BackendPool1')]"
                 }
               ],
               "loadBalancerInboundNatRules": [
                 {
-                  "id": "[concat(variables('lbID'),concat('/inboundNatRule/RDP-VM', copyindex()))]"
+                  "id": "[concat('Microsoft.Network/loadBalancers/',variables('lbName'),'/inboundNatRule/RDP-VM')]"
                 }
 
               ]
@@ -249,6 +243,13 @@
         "hardwareProfile": {
           "vmSize": "[parameters('vmSize')]"
         },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces',concat('nic', copyindex()))]"
+            }
+          ]
+        },
         "osProfile": {
 
           "computerName": "[concat('vm', copyIndex())]",
@@ -270,13 +271,6 @@
             "caching": "ReadWrite",
             "createOption": "FromImage"
           }
-        },
-        "networkProfile": {
-          "networkInterfaces": [
-            {
-              "id": "[resourceId('Microsoft.Network/networkInterfaces',concat('nic', copyindex()))]"
-            }
-          ]
         }
       }
     }
