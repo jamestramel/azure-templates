@@ -15,12 +15,10 @@
     "value": "East US"
   },
   "vmSize": {
-    "value": "Standard_D1"
+    "value": "Standard_A1"
   },
-  "imageSKU": {
-    "value":  "2008-R2-SP1"
-    },
-  "dnsNameforLBIP": {
-    "value": "myLB"
+    "imageSKU": {
+        "value": "2008-R2-SP1"
     }
 }
+

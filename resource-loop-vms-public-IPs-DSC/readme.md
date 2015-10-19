@@ -1,6 +1,7 @@
-# Create a LB and 'N' Virtual Machines using Resource Loops update this.
+# Create Virtual Machines using Resource Loops
 
-<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fteodelas%2Fazure-templates%2Fmaster%2Fresource-loop-vms-LB%2FTemplates%2Fazuredeploy.json" target="_blank">
+<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fteodelas%2Fazure-templates%2Fmaster%2Fresource-loop-vms-public-IPs%2FTemplates%2Fazuredeploy.json" target="_blank">
+
     <img src="http://azuredeploy.net/deploybutton.png"/>
 </a>
 
@@ -38,6 +39,3 @@ New-AzureResourceGroupDeployment -Name testvmdeploy -ResourceGroupName testvmrg 
 | imagePublisher | Name of Image Publisher |
 | imageOffer | Name of Image Publisher offer |
 | imageSKU | Name of SKU for the selected offer |
-
-Other:
-//"frontendPort": "[int(concat('500', copyindex()))]",

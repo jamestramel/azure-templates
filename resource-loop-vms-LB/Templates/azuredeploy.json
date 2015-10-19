@@ -23,13 +23,13 @@
     },
     "numberOfInstances": {
       "type": "int",
-      "defaultValue": 20,
       "metadata": {
-        "description": "Number of VMs to deploy"
+        "description": "Number of VMs to deploy.  Max 10"
       }
     },
     "location": {
       "type": "string",
+      "defaultValue": "East US",
       "allowedValues": [
         "West US",
         "East US"
@@ -40,6 +40,7 @@
     },
     "vmSize": {
       "type": "string",
+      "defaultValue": "Standard_A1",
       "allowedValues": [
         "Standard_A1",
         "Standard_A2",
@@ -51,9 +52,11 @@
       "metadata": {
         "description": "Size of the Virtual Machine."
       }
+
     },
     "imageSKU": {
       "type": "string",
+      "defaultValue": "2008-R2-SP1",
       "allowedValues": [
         "2008-R2-SP1",
         "2012-Datacenter"
@@ -85,6 +88,7 @@
     "publicIPAddressID": "[resourceId('Microsoft.Network/publicIPAddresses',variables('publicIPAddressName'))]",
     "lbID": "[resourceId('Microsoft.Network/loadBalancers',variables('lbName'))]",
     "frontEndIPConfigID": "[concat(variables('lbID'),'/frontendIPConfigurations/LoadBalancerFrontEnd')]",
+    "backEndIPConfigID": "[concat(variables('lbID'),'/backendIPConfigurations/LoadBalancerBackEnd')]",
     "lbPoolID": "[concat(variables('lbID'),'/backendAddressPools/BackendPool1')]"
   },
   "resources": [
@@ -129,25 +133,26 @@
       "type": "Microsoft.Network/publicIPAddresses",
       "name": "[variables('publicIPAddressName')]",
       "location": "[resourceGroup().location]",
-      "dnsSettings": {
-        "domainNameLabel": "[parameters('dnsNameforLBIP')]"
-      },
+
       "properties": {
-        "publicIPAllocationMethod": "Dynamic"
+        "publicIPAllocationMethod": "Dynamic",
+        "dnsSettings": {
+          "domainNameLabel": "[parameters('dnsNameforLBIP')]"
+        }
       }
     },
     {
       "apiVersion": "2015-05-01-preview",
+      "name": "[variables('lbName')]",
       "type": "Microsoft.Network/loadBalancers",
+      "location": "[parameters('location')]",
       "dependsOn": [
         "[concat('Microsoft.Network/publicIPAddresses/', variables('publicIPAddressName'))]"
       ],
-      "location": "[resourceGroup().location]",
-      "name": "[variables('lbName')]",
       "properties": {
         "frontendIPConfigurations": [
           {
-            "name": "LoadBalancerFrontEnd",
+            "name": "loadBalancerFrontEnd",
             "properties": {
               "publicIPAddress": {
                 "id": "[variables('publicIPAddressID')]"
@@ -157,122 +162,127 @@
         ],
         "backendAddressPools": [
           {
-            "name": "BackendPool1"
+            "name": "loadBalancerBackEnd"
           }
         ],
         "inboundNatRules": [
           {
-            "name": "[concat('RDP-VM', copyindex())]",
-            "copy": {
-              "name": "NAT Rule Loop",
-              "count": "[parameters('numberofInstances')]"
-            },
+            "name": "RDP-VM0",
             "properties": {
               "frontendIPConfiguration": {
                 "id": "[variables('frontEndIPConfigID')]"
               },
-              "backendIPConfiguration": {
-                "id": "backEndIPConfigID"
-              },
               "protocol": "tcp",
-              "frontendPort": "[int(concat('500', copyindex()))]",
+              "frontendPort": 50001,
               "backendPort": 3389,
               "enableFloatingIP": false
             }
-
-          }
-        ]
-      }
-    },
-    {
-      "apiVersion": "2015-05-01-preview",
-      "type": "Microsoft.Network/networkInterfaces",
-      "name": "[concat('nic', copyindex())]",
-      "location": "[parameters('location')]",
-      "copy": {
-        "name": "nicLoop",
-        "count": "[parameters('numberOfInstances')]"
-      },
-      "dependsOn": [
-        "[concat('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]",
-        "[concat('Microsoft.Network/loadBalancers/', variables('lbName'))]"
-      ],
-      "properties": {
-        "ipConfigurations": [
-          {
-            "name": "ipconfig1",
-            "properties": {
-              "privateIPAllocationMethod": "Dynamic",
-              "subnet": {
-                "id": "[variables('subnet1Ref')]"
-              },
-              "loadBalancerBackendAddressPools": [
-                {
-                  //Add NIC to Backend Address Pool of the LB
-                  "id": "[concat(variables('lbID'), '/backendAddressPools/BackendPool1')]"
-                }
-              ],
-              "loadBalancerInboundNatRules": [
-                {
-                  "id": "[concat(variables('lbID'),concat('/inboundNatRule/RDP-VM', copyindex()))]"
-                }
-
-              ]
-            }
-          }
-        ]
-      }
-    },
-    {
-      "apiVersion": "2015-05-01-preview",
-      "type": "Microsoft.Compute/virtualMachines",
-      "name": "[concat('myvm', copyIndex())]",
-      "location": "[parameters('location')]",
-      "copy": {
-        "name": "virtualMachineLoop",
-        "count": "[parameters('numberOfInstances')]"
-      },
-      "dependsOn": [
-        "[concat('Microsoft.Network/networkInterfaces/', 'nic', copyindex())]",
-        "[concat('Microsoft.Storage/storageAccounts/', parameters('newStorageAccountName'))]"
-      ],
-      "properties": {
-        "availabilitySet": {
-          "id": "[resourceId('Microsoft.Compute/availabilitySets', variables('availabilitySetName'))]"
-        },
-        "hardwareProfile": {
-          "vmSize": "[parameters('vmSize')]"
-        },
-        "osProfile": {
-
-          "computerName": "[concat('vm', copyIndex())]",
-          "adminUsername": "[parameters('adminUsername')]",
-          "adminPassword": "[parameters('adminPassword')]"
-        },
-        "storageProfile": {
-          "imageReference": {
-            "publisher": "[variables('imagePublisher')]",
-            "offer": "[variables('imageOffer')]",
-            "sku": "[parameters('imageSKU')]",
-            "version": "latest"
           },
-          "osDisk": {
-            "name": "osdisk",
-            "vhd": {
-              "uri": "[concat('http://',parameters('newStorageAccountName'),'.blob.core.windows.net/vhds/','osdisk', copyIndex(), '.vhd')]"
-            },
-            "caching": "ReadWrite",
-            "createOption": "FromImage"
+          {
+            "name": "RDP-VM1",
+            "properties": {
+              "frontendIPConfiguration": {
+                "id": "[variables('frontEndIPConfigID')]"
+              },
+              "protocol": "tcp",
+              "frontendPort": 50002,
+              "backendPort": 3389,
+              "enableFloatingIP": false
+            }
+          }        
+        ]
           }
+      },
+      {
+        "apiVersion": "2015-05-01-preview",
+        "type": "Microsoft.Network/networkInterfaces",
+        "name": "[concat('nic', copyindex())]",
+        "location": "[parameters('location')]",
+        "copy": {
+          "name": "nicLoop",
+          "count": "[parameters('numberOfInstances')]"
         },
-        "networkProfile": {
-          "networkInterfaces": [
+        "dependsOn": [
+          "[concat('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]",
+          "[concat('Microsoft.Network/loadBalancers/', variables('lbName'))]"
+        ],
+        "properties": {
+          "ipConfigurations": [
             {
-              "id": "[resourceId('Microsoft.Network/networkInterfaces',concat('nic', copyindex()))]"
+              "name": "ipconfig1",
+              "properties": {
+                "privateIPAllocationMethod": "Dynamic",
+                "subnet": {
+                  "id": "[variables('subnet1Ref')]"
+                },
+                "loadBalancerBackendAddressPools": [
+                  {
+
+                    "id": "[concat(variables('lbID'), '/backendAddressPools/loadBalancerBackEnd')]"
+                  }
+                ],
+                "loadBalancerInboundNatRules": [
+                  {
+                    //need to add copyindex at the end and make sure to add enough inbound NAT rules to LB def
+                    "id": "[concat(variables('lbID'),'/inboundNatRules/RDP-VM', copyindex())]"
+                  }
+
+                ]
+              }
             }
           ]
         }
+      },
+      {
+        "apiVersion": "2015-05-01-preview",
+        "type": "Microsoft.Compute/virtualMachines",
+        "name": "[concat('myvm', copyIndex())]",
+        "location": "[parameters('location')]",
+        "copy": {
+          "name": "virtualMachineLoop",
+          "count": "[parameters('numberOfInstances')]"
+        },
+        "dependsOn": [
+          "[concat('Microsoft.Network/networkInterfaces/', 'nic', copyindex())]",
+          "[concat('Microsoft.Storage/storageAccounts/', parameters('newStorageAccountName'))]"
+        ],
+        "properties": {
+          "availabilitySet": {
+            "id": "[resourceId('Microsoft.Compute/availabilitySets', variables('availabilitySetName'))]"
+          },
+          "hardwareProfile": {
+            "vmSize": "[parameters('vmSize')]"
+          },
+          "networkProfile": {
+            "networkInterfaces": [
+              {
+                "id": "[resourceId('Microsoft.Network/networkInterfaces',concat('nic', copyindex()))]"
+              }
+            ]
+          },
+          "osProfile": {
+
+            "computerName": "[concat('vm', copyIndex())]",
+            "adminUsername": "[parameters('adminUsername')]",
+            "adminPassword": "[parameters('adminPassword')]"
+          },
+          "storageProfile": {
+            "imageReference": {
+              "publisher": "[variables('imagePublisher')]",
+              "offer": "[variables('imageOffer')]",
+              "sku": "[parameters('imageSKU')]",
+              "version": "latest"
+            },
+            "osDisk": {
+              "name": "osdisk",
+              "vhd": {
+                "uri": "[concat('http://',parameters('newStorageAccountName'),'.blob.core.windows.net/vhds/','osdisk', copyIndex(), '.vhd')]"
+              },
+              "caching": "ReadWrite",
+              "createOption": "FromImage"
+            }
+          }
+        }
       }
+      ]
     }
-  ]
-}

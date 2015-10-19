@@ -11,7 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>78fd8811-3a3c-48dc-9f88-12237f05ee0f</ProjectGuid>
+    <ProjectGuid>1b0bdf6a-09a6-4311-8b5b-af37e4e29da6</ProjectGuid>
   </PropertyGroup>
   <PropertyGroup>
     <TargetFrameworkIdentifier>Deployment</TargetFrameworkIdentifier>
@@ -33,11 +33,11 @@
       <Visible>False</Visible>
     </None>
     <Content Include="Scripts\Deploy-AzureResourceGroup.ps1" />
-    <None Include="readme.md" />
-    <None Include="Templates\azuredeploy-parameters" />
-    <None Include="Templates\azuredeploy.json" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="readme.md" />
+    <None Include="Templates\azuredeploy-parameters.json" />
+    <None Include="Templates\azuredeploy.json" />
     <None Include="Tools\AzCopy.exe" />
     <None Include="Tools\Microsoft.Data.Edm.dll">
       <Visible>False</Visible>
