@@ -18,9 +18,17 @@
     "value": "Standard_D1"
   },
   "imageSKU": {
+<<<<<<< HEAD
     "value":  "2008-R2-SP1"
     },
   "dnsNameforLBIP": {
     "value": "myLB"
+=======
+    "value":  "Windows"
+    },
+    "dnsNameforLBIP": {
+    "value": "myLB"
+      
+>>>>>>> origin/master
     }
 }

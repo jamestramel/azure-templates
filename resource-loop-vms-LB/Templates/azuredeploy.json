@@ -150,6 +150,7 @@
         "[concat('Microsoft.Network/publicIPAddresses/', variables('publicIPAddressName'))]"
       ],
       "properties": {
+<<<<<<< HEAD
         "frontendIPConfigurations": [
           {
             "name": "loadBalancerFrontEnd",
@@ -157,9 +158,16 @@
               "publicIPAddress": {
                 "id": "[variables('publicIPAddressID')]"
               }
+=======
+        "frontendIPConfigurations": {
+          "name": "LoadBalancerFrontEnd",
+          "properties": {
+            "publicIPAddress": {
+              "id": "[variables('publicIPAddressID')]"
+>>>>>>> origin/master
             }
           }
-        ],
+        },
         "backendAddressPools": [
           {
             "name": "loadBalancerBackEnd"
@@ -172,22 +180,64 @@
               "frontendIPConfiguration": {
                 "id": "[variables('frontEndIPConfigID')]"
               },
+              "backendIPConfiguration": {
+                "id": "[variables('backEndIPConfigID')]"
+              },
               "protocol": "tcp",
               "frontendPort": 50001,
               "backendPort": 3389,
               "enableFloatingIP": false
             }
+<<<<<<< HEAD
           },
+=======
+
+
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "2015-05-01-preview",
+      "type": "Microsoft.Network/networkInterfaces",
+      "name": "[concat('nic', copyindex())]",
+      "location": "[parameters('location')]",
+      "copy": {
+        "name": "nicLoop",
+        "count": "[parameters('numberOfInstances')]"
+      },
+      "dependsOn": [
+        "[concat('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]",
+        "[concat('Microsoft.Network/loadBalancers/', variables('lbName'))]"
+      ],
+      "properties": {
+        "ipConfigurations": [
+>>>>>>> origin/master
           {
             "name": "RDP-VM1",
             "properties": {
               "frontendIPConfiguration": {
                 "id": "[variables('frontEndIPConfigID')]"
               },
+<<<<<<< HEAD
               "protocol": "tcp",
               "frontendPort": 50002,
               "backendPort": 3389,
               "enableFloatingIP": false
+=======
+              "loadBalancerBackendAddressPools": [
+                {
+
+                  "id": "[concat(variables('lbID'), '/backendAddressPools/BackendPool1')]"
+                }
+              ],
+              "loadBalancerInboundNatRules": [
+                {
+                  "id": "[concat('Microsoft.Network/loadBalancers/',variables('lbName'),'/inboundNatRule/RDP-VM')]"
+                }
+
+              ]
+>>>>>>> origin/master
             }
           }        
         ]
@@ -202,6 +252,7 @@
           "name": "nicLoop",
           "count": "[parameters('numberOfInstances')]"
         },
+<<<<<<< HEAD
         "dependsOn": [
           "[concat('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]",
           "[concat('Microsoft.Network/loadBalancers/', variables('lbName'))]"
@@ -241,6 +292,20 @@
         "copy": {
           "name": "virtualMachineLoop",
           "count": "[parameters('numberOfInstances')]"
+=======
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces',concat('nic', copyindex()))]"
+            }
+          ]
+        },
+        "osProfile": {
+
+          "computerName": "[concat('vm', copyIndex())]",
+          "adminUsername": "[parameters('adminUsername')]",
+          "adminPassword": "[parameters('adminPassword')]"
+>>>>>>> origin/master
         },
         "dependsOn": [
           "[concat('Microsoft.Network/networkInterfaces/', 'nic', copyindex())]",
@@ -273,6 +338,7 @@
               "sku": "[parameters('imageSKU')]",
               "version": "latest"
             },
+<<<<<<< HEAD
             "osDisk": {
               "name": "osdisk",
               "vhd": {
@@ -281,6 +347,10 @@
               "caching": "ReadWrite",
               "createOption": "FromImage"
             }
+=======
+            "caching": "ReadWrite",
+            "createOption": "FromImage"
+>>>>>>> origin/master
           }
         }
       }
