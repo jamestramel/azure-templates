@@ -79,7 +79,7 @@
     "vmExtensionName": "WebServerDSC",
     "modulesUrl": "https://github.com/Azure/azure-quickstart-templates/blob/master/dsc-extension-azure-automation-pullserver/UpdateLCMforAAPull.zip",
     "registrationUrl": "https://eus2-agentservice-prod-1.azure-automation.net/accounts/26a3b072-6033-4c7f-8859-aabb71815987",
-    "nodeConfigurationName": "DSC",
+    "nodeConfigurationName": "MyWebConfig.DSC",
     "registrationKey": "weG7gZDN4072Zwh7j85XHrvYgHdPpTy5Ifi22TIt9dQPAwmNwndDEpAluIwq6nEhH4/RBO3iP094+KDnzbOTSQ==",
     "configurationFunction": "UpdateLCMforAAPull.ps1\\ConfigureLCMforAAPull",
     "configurationMode": "ApplyAndAutoCorrect",
@@ -273,7 +273,7 @@
             },
             {
               "Name": "RebootNodeIfNeeded",
-              "Value": "[parameters('rebootNodeIfNeeded')]",
+              "Value": "[variables('rebootNodeIfNeeded')]",
               "TypeName": "System.Boolean"
             },
             {
