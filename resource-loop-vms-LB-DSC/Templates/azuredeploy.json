@@ -29,7 +29,7 @@
         6
       ],
       "metadata": {
-        "description": "Number of VMs to deploy.  Max 10"
+        "description": "Number of VMs to deploy.  Max 6"
       }
     },
     "location": {

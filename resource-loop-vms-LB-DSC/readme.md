@@ -22,7 +22,7 @@ New-AzureResourceGroup -ResourceGroupName testvmrg -Location "West US"
 
 4) Deploy this template using the command below
 
-New-AzureResourceGroupDeployment -Name testvmdeploy -ResourceGroupName testvmrg -TemplateUri "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/resource-loop-vms-vnet-aset/azuredeploy.json"
+New-AzureResourceGroupDeployment -Name testvmdeploy -ResourceGroupName testvmrg -TemplateUri "https://raw.githubusercontent.com/teodelas/azure-templates/master/resource-loop-vms-LB-DSC/Templates/azuredeploy.json"
 
 
 # Parameters for the template
