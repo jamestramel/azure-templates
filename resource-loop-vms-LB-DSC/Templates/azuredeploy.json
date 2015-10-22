@@ -178,7 +178,7 @@
             }
           },
           {
-            "name": "RDP-VM2",
+            "name": "RDP-VM1",
             "properties": {
               "frontendIPConfiguration": {
                 "id": "[variables('frontEndIPConfigID')]"
@@ -310,9 +310,7 @@
             },
             "caching": "ReadWrite",
             "createOption": "FromImage"
-          },
-          "caching": "ReadWrite",
-          "createOption": "FromImage"
+          }
         }
       }
     }
