@@ -150,14 +150,16 @@
         "[concat('Microsoft.Network/publicIPAddresses/', variables('publicIPAddressName'))]"
       ],
       "properties": {
-        "frontendIPConfigurations": {
-          "name": "LoadBalancerFrontEnd",
-          "properties": {
-            "publicIPAddress": {
-              "id": "[variables('publicIPAddressID')]"
+        "frontendIPConfigurations": [
+          {
+            "name": "LoadBalancerFrontEnd",
+            "properties": {
+              "publicIPAddress": {
+                "id": "[variables('publicIPAddressID')]"
+              }
             }
           }
-        },
+        ],
         "backendAddressPools": [
           {
             "name": "BackendPool1"
