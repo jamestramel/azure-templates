@@ -1,0 +1,26 @@
+{
+  "newStorageAccountName": {
+    "value": "teststore"
+  },
+  "adminUsername": {
+    "value": "teodelas"
+  },
+  "adminPassword": {
+    "value": "Password.1"
+  },
+  "numberOfInstances": {
+    "value": 2
+  },
+  "location": {
+    "value": "East US"
+  },
+  "vmSize": {
+    "value": "Standard_D1"
+  },
+  "imageSKU": {
+    "value":  "2008-R2-SP1"
+    },
+  "dnsNameforLBIP": {
+    "value": "myLB"
+    }
+}
