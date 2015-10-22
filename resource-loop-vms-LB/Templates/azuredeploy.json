@@ -88,8 +88,8 @@
     "publicIPAddressID": "[resourceId('Microsoft.Network/publicIPAddresses',variables('publicIPAddressName'))]",
     "lbID": "[resourceId('Microsoft.Network/loadBalancers',variables('lbName'))]",
     "frontEndIPConfigID": "[concat(variables('lbID'),'/frontendIPConfigurations/LoadBalancerFrontEnd')]",
-    "backEndIPConfigID": "[concat(variables('lbID'),'/backendIPConfigurations/LoadBalancerBackEnd')]",
-    "lbPoolID": "[concat(variables('lbID'),'/backendAddressPools/BackendPool1')]"
+    "lbPoolID": "[concat(variables('lbID'),'/backendAddressPools/BackendPool1')]",
+    "lbProbeID": "[concat(variables('lbID'),'/probes/tcpProbe')]"
   },
   "resources": [
     {
@@ -149,14 +149,16 @@
         "[concat('Microsoft.Network/publicIPAddresses/', variables('publicIPAddressName'))]"
       ],
       "properties": {
-        "frontendIPConfigurations": {
-          "name": "LoadBalancerFrontEnd",
-          "properties": {
-            "publicIPAddress": {
-              "id": "[variables('publicIPAddressID')]"
+        "frontendIPConfigurations": [
+          {
+            "name": "LoadBalancerFrontEnd",
+            "properties": {
+              "publicIPAddress": {
+                "id": "[variables('publicIPAddressID')]"
+              }
             }
           }
-        },
+        ],
         "backendAddressPools": [
           {
             "name": "BackendPool1"
@@ -169,9 +171,6 @@
               "frontendIPConfiguration": {
                 "id": "[variables('frontEndIPConfigID')]"
               },
-              "backendIPConfiguration": {
-                "id": "[variables('backEndIPConfigID')]"
-              },
               "protocol": "tcp",
               "frontendPort": 50001,
               "backendPort": 3389,
@@ -179,16 +178,13 @@
             }
           },
           {
-            "name": "RDP-VM2",
+            "name": "RDP-VM1",
             "properties": {
               "frontendIPConfiguration": {
                 "id": "[variables('frontEndIPConfigID')]"
               },
-              "backendIPConfiguration": {
-                "id": "[variables('backEndIPConfigID')]"
-              },
               "protocol": "tcp",
-              "frontendPort": 50001,
+              "frontendPort": 50002,
               "backendPort": 3389,
               "enableFloatingIP": false
             }
@@ -253,7 +249,7 @@
               "loadBalancerBackendAddressPools": [
                 {
 
-                  "id": "[concat(variables('lbID'), '/backendAddressPools/loadBalancerBackEnd')]"
+                  "id": "[concat(variables('lbID'), '/backendAddressPools/BackendPool1')]"
                 }
               ],
               "loadBalancerInboundNatRules": [
@@ -276,18 +272,6 @@
       "copy": {
         "name": "virtualMachineLoop",
         "count": "[parameters('numberOfInstances')]"
-      },
-      "networkProfile": {
-        "networkInterfaces": [
-          {
-            "id": "[resourceId('Microsoft.Network/networkInterfaces',concat('nic', copyindex()))]"
-          }
-        ]
-      },
-      "osProfile": {
-        "adminPassword": "[parameters('adminPassword')]",
-        "adminUsername": "[parameters('adminUsername')]",
-        "computerName": "[concat('vm', copyIndex())]"
       },
       "dependsOn": [
         "[concat('Microsoft.Network/networkInterfaces/', 'nic', copyindex())]",
@@ -326,9 +310,7 @@
             },
             "caching": "ReadWrite",
             "createOption": "FromImage"
-          },
-          "caching": "ReadWrite",
-          "createOption": "FromImage"
+          }
         }
       }
     }

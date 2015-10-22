@@ -89,7 +89,19 @@
     "lbID": "[resourceId('Microsoft.Network/loadBalancers',variables('lbName'))]",
     "frontEndIPConfigID": "[concat(variables('lbID'),'/frontendIPConfigurations/LoadBalancerFrontEnd')]",
     "lbPoolID": "[concat(variables('lbID'),'/backendAddressPools/BackendPool1')]",
-    "lbProbeID": "[concat(variables('lbID'),'/probes/tcpProbe')]"
+    "lbProbeID": "[concat(variables('lbID'),'/probes/tcpProbe')]",
+    "vmExtensionName": "WebServerDSC",
+    "modulesUrl": "https://github.com/Azure/azure-quickstart-templates/raw/master/dsc-extension-azure-automation-pullserver/UpdateLCMforAAPull.zip ",
+    "registrationUrl": "https://eus2-agentservice-prod-1.azure-automation.net/accounts/26a3b072-6033-4c7f-8859-aabb71815987",
+    "nodeConfigurationName": "MyWebConfig.DSC",
+    "registrationKey": "weG7gZDN4072Zwh7j85XHrvYgHdPpTy5Ifi22TIt9dQPAwmNwndDEpAluIwq6nEhH4/RBO3iP094+KDnzbOTSQ==",
+    "configurationFunction": "UpdateLCMforAAPull.ps1\\ConfigureLCMforAAPull",
+    "configurationMode": "ApplyAndAutoCorrect",
+    "configurationModeFrequencyMins": 15,
+    "refreshFrequencyMins": 30,
+    "rebootNodeIfNeeded": true,
+    "actionAfterReboot": "ContinueConfiguration",
+    "allowModuleOverwrite": false
   },
   "resources": [
     {
@@ -312,6 +324,78 @@
             "createOption": "FromImage"
           }
         }
+      }
+    }
+    {
+      "type": "Microsoft.Compute/virtualMachines/extensions",
+      "name": "[concat('myvm', copyIndex(),'/dscExtension')]",
+      "apiVersion": "2015-05-01-preview",
+      "location": "[parameters('location')]",
+      "copy": {
+        "name": "dscLoop",
+        "count": "[parameters('numberOfInstances')]"
+      },
+      "dependsOn": [
+        "[concat('Microsoft.Compute/virtualMachines/', 'myvm',copyIndex())]"
+      ],
+      "properties": {
+        "publisher": "Microsoft.Powershell",
+        "type": "DSC",
+        "typeHandlerVersion": "2.7",
+        "autoUpgradeMinorVersion": true,
+        "settings": {
+          "ModulesUrl": "[variables('modulesUrl')]",
+          "SasToken": "",
+          "ConfigurationFunction": "[variables('configurationFunction')]",
+          "Properties": [
+           {
+              "Name": "RegistrationKey",
+              "Value": "[variables('registrationKey')]",
+              "TypeName": "System.String"
+            },
+            {
+              "Name": "RegistrationUrl",
+              "Value": "[variables('registrationUrl')]",
+              "TypeName": "System.String"
+            },
+            {
+              "Name": "NodeConfigurationName",
+              "Value": "[variables('nodeConfigurationName')]",
+              "TypeName": "System.String"
+            },
+            {
+              "Name": "ConfigurationMode",
+              "Value": "[variables('configurationMode')]",
+              "TypeName": "System.String"
+            },
+            {
+              "Name": "ConfigurationModeFrequencyMins",
+              "Value": "[variables('configurationModeFrequencyMins')]",
+              "TypeName": "System.Int32"
+            },
+            {
+              "Name": "RefreshFrequencyMins",
+              "Value": "[variables('refreshFrequencyMins')]",
+              "TypeName": "System.Int32"
+            },
+            {
+              "Name": "RebootNodeIfNeeded",
+              "Value": "[variables('rebootNodeIfNeeded')]",
+              "TypeName": "System.Boolean"
+            },
+            {
+              "Name": "ActionAfterReboot",
+              "Value": "[variables('actionAfterReboot')]",
+              "TypeName": "System.String"
+            },
+            {
+              "Name": "AllowModuleOverwrite",
+              "Value": "[variables('allowModuleOverwrite')]",
+              "TypeName": "System.Boolean"
+            }
+          ]
+        },
+        "protectedSettings": null
       }
     }
   ]
