@@ -277,18 +277,6 @@
         "name": "virtualMachineLoop",
         "count": "[parameters('numberOfInstances')]"
       },
-      "networkProfile": {
-        "networkInterfaces": [
-          {
-            "id": "[resourceId('Microsoft.Network/networkInterfaces',concat('nic', copyindex()))]"
-          }
-        ]
-      },
-      "osProfile": {
-        "adminPassword": "[parameters('adminPassword')]",
-        "adminUsername": "[parameters('adminUsername')]",
-        "computerName": "[concat('vm', copyIndex())]"
-      },
       "dependsOn": [
         "[concat('Microsoft.Network/networkInterfaces/', 'nic', copyindex())]",
         "[concat('Microsoft.Storage/storageAccounts/', parameters('newStorageAccountName'))]"
