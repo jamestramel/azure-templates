@@ -177,6 +177,21 @@
               "backendPort": 3389,
               "enableFloatingIP": false
             }
+          },
+          {
+            "name": "RDP-VM2",
+            "properties": {
+              "frontendIPConfiguration": {
+                "id": "[variables('frontEndIPConfigID')]"
+              },
+              "backendIPConfiguration": {
+                "id": "[variables('backEndIPConfigID')]"
+              },
+              "protocol": "tcp",
+              "frontendPort": 50001,
+              "backendPort": 3389,
+              "enableFloatingIP": false
+            }
           }
         ],
         "loadBalancingRules": [
@@ -212,46 +227,6 @@
           }
         ]
       }
-    },
-    {
-      "apiVersion": "2015-05-01-preview",
-      "type": "Microsoft.Network/networkInterfaces",
-      "name": "[concat('nic', copyindex())]",
-      "location": "[parameters('location')]",
-      "copy": {
-        "name": "nicLoop",
-        "count": "[parameters('numberOfInstances')]"
-      },
-      "dependsOn": [
-        "[concat('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]",
-        "[concat('Microsoft.Network/loadBalancers/', variables('lbName'))]"
-      ],
-      "properties": {
-        "ipConfigurations": [
-          {
-            "name": "ipconfig1",
-
-            "properties": {
-              "privateIPAllocationMethod": "Dynamic",
-              "subnet": {
-                "id": "[variables('subnet1Ref')]"
-              }
-            },
-            "loadBalancerBackendAddressPools": [
-              {
-
-                "id": "[concat(variables('lbID'), '/backendAddressPools/BackendPool1')]"
-              }
-            ],
-            "loadBalancerInboundNatRules": [
-              {
-                "id": "[concat('Microsoft.Network/loadBalancers/',variables('lbName'),'/inboundNatRule/RDP-VM01')]"
-              }
-
-            ]
-          }
-      ]
-    }
     },
     {
       "apiVersion": "2015-05-01-preview",
