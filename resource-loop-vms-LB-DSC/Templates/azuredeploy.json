@@ -61,7 +61,7 @@
     },
     "imageSKU": {
       "type": "string",
-      "defaultValue": "2008-R2-SP1",
+      "defaultValue": "2012-R2-Datacenter",
       "allowedValues": [
         "2012-R2-Datacenter"
       ],
