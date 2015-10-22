@@ -249,7 +249,7 @@
               "loadBalancerBackendAddressPools": [
                 {
 
-                  "id": "[concat(variables('lbID'), '/backendAddressPools/loadBalancerBackEnd')]"
+                  "id": "[concat(variables('lbID'), '/backendAddressPools/BackendPool1')]"
                 }
               ],
               "loadBalancerInboundNatRules": [
