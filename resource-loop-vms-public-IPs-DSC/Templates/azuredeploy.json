@@ -25,12 +25,7 @@
       "defaultValue": 2,
       "metadata": {
         "description": "Number of VMs to deploy"
-      },
-      "allowedValues": [
-        2,
-        4,
-        6
-      ]
+      }
     },
     "location": {
       "type": "string",
