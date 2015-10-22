@@ -22,7 +22,7 @@
     },
     "numberOfInstances": {
       "type": "int",
-      "defaultValue": 2,
+      "defaultValue": 20,
       "metadata": {
         "description": "Number of VMs to deploy"
       }
@@ -56,7 +56,7 @@
     },
     "imageSKU": {
       "type": "string",
-      "defaultValue":  "2012-R2-Datacenter",
+      "defaultValue": "2012-R2-Datacenter",
       "allowedValues": [
         "2012-R2-Datacenter"
       ],

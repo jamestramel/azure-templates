@@ -23,6 +23,11 @@
     },
     "numberOfInstances": {
       "type": "int",
+      "allowedValues": [
+        2,
+        4,
+        6
+      ],
       "metadata": {
         "description": "Number of VMs to deploy.  Max 10"
       }
@@ -58,7 +63,7 @@
       "type": "string",
       "defaultValue": "2008-R2-SP1",
       "allowedValues": [
-        "2012-Datacenter"
+        "2012-R2-Datacenter"
       ],
       "metadata": {
         "description": "OS Version"
