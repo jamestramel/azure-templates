@@ -1,7 +1,6 @@
 # Create Virtual Machines using Resource Loops
 
 <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fteodelas%2Fazure-templates%2Fmaster%2Fresource-loop-vms-public-IPs%2FTemplates%2Fazuredeploy.json" target="_blank">
-
     <img src="http://azuredeploy.net/deploybutton.png"/>
 </a>
 
