@@ -171,9 +171,6 @@
               "frontendIPConfiguration": {
                 "id": "[variables('frontEndIPConfigID')]"
               },
-              "backendIPConfiguration": {
-                "id": "[variables('lbPoolID')]"
-              },
               "protocol": "tcp",
               "frontendPort": 50001,
               "backendPort": 3389,
@@ -185,9 +182,6 @@
             "properties": {
               "frontendIPConfiguration": {
                 "id": "[variables('frontEndIPConfigID')]"
-              },
-              "backendIPConfiguration": {
-                "id": "[variables('lbPoolID')]"
               },
               "protocol": "tcp",
               "frontendPort": 50002,
