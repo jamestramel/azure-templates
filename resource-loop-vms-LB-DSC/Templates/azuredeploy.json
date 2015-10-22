@@ -58,7 +58,6 @@
       "type": "string",
       "defaultValue": "2008-R2-SP1",
       "allowedValues": [
-        "2008-R2-SP1",
         "2012-Datacenter"
       ],
       "metadata": {
