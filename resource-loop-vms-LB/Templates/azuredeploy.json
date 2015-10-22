@@ -149,139 +149,156 @@
         "[concat('Microsoft.Network/publicIPAddresses/', variables('publicIPAddressName'))]"
       ],
       "properties": {
-        "frontendIPConfigurations": [
-          {
-            "name": "loadBalancerFrontEnd",
-            "properties": {
-              "publicIPAddress": {
-                "id": "[variables('publicIPAddressID')]"
-              },
-
-              "frontendIPConfigurations": {
-                "name": "LoadBalancerFrontEnd",
-                "properties": {
-                  "publicIPAddress": {
-                    "id": "[variables('publicIPAddressID')]"
-                  }
-                }
-              },
-              "backendAddressPools": [
-                {
-                  "name": "loadBalancerBackEnd"
-                }
-              ],
-              "inboundNatRules": [
-                {
-                  "name": "RDP-VM0",
-                  "properties": {
-                    "frontendIPConfiguration": {
-                      "id": "[variables('frontEndIPConfigID')]"
-                    },
-                    "backendIPConfiguration": {
-                      "id": "[variables('backEndIPConfigID')]"
-                    },
-                    "protocol": "tcp",
-                    "frontendPort": 50001,
-                    "backendPort": 3389,
-                    "enableFloatingIP": false
-                  }
-                },
+        "frontendIPConfigurations": {
+          "name": "LoadBalancerFrontEnd",
+          "properties": {
+            "publicIPAddress": {
+              "id": "[variables('publicIPAddressID')]"
             }
-            ],
           }
+        },
+        "backendAddressPools": [
+          {
+            "name": "BackendPool1"
+          }
+        ],
+        "inboundNatRules": [
+          {
+            "name": "RDP-VM0",
+            "properties": {
+              "frontendIPConfiguration": {
+                "id": "[variables('frontEndIPConfigID')]"
+              },
+              "backendIPConfiguration": {
+                "id": "[variables('backEndIPConfigID')]"
+              },
+              "protocol": "tcp",
+              "frontendPort": 50001,
+              "backendPort": 3389,
+              "enableFloatingIP": false
+            }
+          },
+          {
+            "name": "RDP-VM2",
+            "properties": {
+              "frontendIPConfiguration": {
+                "id": "[variables('frontEndIPConfigID')]"
+              },
+              "backendIPConfiguration": {
+                "id": "[variables('backEndIPConfigID')]"
+              },
+              "protocol": "tcp",
+              "frontendPort": 50001,
+              "backendPort": 3389,
+              "enableFloatingIP": false
+            }
+          }
+        ],
+        "loadBalancingRules": [
+          {
+            "name": "LBRule",
+            "properties": {
+              "frontendIPConfiguration": {
+                "id": "[variables('frontEndIPConfigID')]"
+              },
+              "backendAddressPool": {
+                "id": "[variables('lbPoolID')]"
+              },
+              "protocol": "tcp",
+              "frontendPort": 80,
+              "backendPort": 80,
+              "enableFloatingIP": false,
+              "idleTimeoutInMinutes": 5,
+              "probe": {
+                "id": "[variables('lbProbeID')]"
+              }
+            }
+          }
+        ],
+        "probes": [
+          {
+            "name": "tcpProbe",
+            "properties": {
+              "protocol": "tcp",
+              "port": 80,
+              "intervalInSeconds": 5,
+              "numberOfProbes": 2
+            }
+          }
+        ]
       }
     },
     {
-        "apiVersion": "2015-05-01-preview",
-        "type": "Microsoft.Network/networkInterfaces",
-        "name": "[concat('nic', copyindex())]",
-        "location": "[parameters('location')]",
-        "copy": {
-          "name": "nicLoop",
-          "count": "[parameters('numberOfInstances')]"
-        },
-        "dependsOn": [
-          "[concat('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]",
-          "[concat('Microsoft.Network/loadBalancers/', variables('lbName'))]"
-        ],
-        "properties": {
-          "ipConfigurations": [
-            {
-              "name": "RDP-VM1",
-              "properties": {
-                "frontendIPConfiguration": {
-                  "id": "[variables('frontEndIPConfigID')]"
-                },
-                "protocol": "tcp",
-                "frontendPort": 50002,
-                "backendPort": 3389,
-                "enableFloatingIP": false,
-                "loadBalancerBackendAddressPools": [
-                  {
-
-                    "id": "[concat(variables('lbID'), '/backendAddressPools/BackendPool1')]"
-                  }
-                ],
-                "loadBalancerInboundNatRules": [
-                  {
-                    "id": "[concat('Microsoft.Network/loadBalancers/',variables('lbName'),'/inboundNatRule/RDP-VM')]"
-                  }
-
-                ]
-
-              }
-            }
-          ]
-        }
+      "apiVersion": "2015-05-01-preview",
+      "type": "Microsoft.Network/networkInterfaces",
+      "name": "[concat('nic', copyindex())]",
+      "location": "[parameters('location')]",
+      "copy": {
+        "name": "nicLoop",
+        "count": "[parameters('numberOfInstances')]"
       },
-    {
-        "apiVersion": "2015-05-01-preview",
-        "type": "Microsoft.Network/networkInterfaces",
-        "name": "[concat('nic', copyindex())]",
-        "location": "[parameters('location')]",
-        "copy": {
-          "name": "nicLoop",
-          "count": "[parameters('numberOfInstances')]"
-        },
-        "dependsOn": [
-          "[concat('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]",
-          "[concat('Microsoft.Network/loadBalancers/', variables('lbName'))]"
-        ],
-        "properties": {
-          "ipConfigurations": [
-            {
-              "name": "ipconfig1",
-              "properties": {
-                "privateIPAllocationMethod": "Dynamic",
-                "subnet": {
-                  "id": "[variables('subnet1Ref')]"
-                },
-                "loadBalancerBackendAddressPools": [
-                  {
+      "dependsOn": [
+        "[concat('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]",
+        "[concat('Microsoft.Network/loadBalancers/', variables('lbName'))]"
+      ],
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "subnet": {
+                "id": "[variables('subnet1Ref')]"
+              },
+              "loadBalancerBackendAddressPools": [
+                {
 
-                    "id": "[concat(variables('lbID'), '/backendAddressPools/loadBalancerBackEnd')]"
-                  }
-                ],
-                "loadBalancerInboundNatRules": [
-                  {
-                    //need to add copyindex at the end and make sure to add enough inbound NAT rules to LB def
-                    "id": "[concat(variables('lbID'),'/inboundNatRules/RDP-VM', copyindex())]"
-                  }
+                  "id": "[concat(variables('lbID'), '/backendAddressPools/loadBalancerBackEnd')]"
+                }
+              ],
+              "loadBalancerInboundNatRules": [
+                {
+                  //need to add copyindex at the end and make sure to add enough inbound NAT rules to LB def
+                  "id": "[concat(variables('lbID'),'/inboundNatRules/RDP-VM', copyindex())]"
+                }
 
-                ]
-              }
+              ]
             }
-          ]
-        }
-      },
+          }
+        ]
+      }
+    },
     {
-        "apiVersion": "2015-05-01-preview",
-        "type": "Microsoft.Compute/virtualMachines",
-        "name": "[concat('myvm', copyIndex())]",
-        "location": "[parameters('location')]",
-        "copy": {
-          "name": "virtualMachineLoop",
-          "count": "[parameters('numberOfInstances')]"
+      "apiVersion": "2015-05-01-preview",
+      "type": "Microsoft.Compute/virtualMachines",
+      "name": "[concat('myvm', copyIndex())]",
+      "location": "[parameters('location')]",
+      "copy": {
+        "name": "virtualMachineLoop",
+        "count": "[parameters('numberOfInstances')]"
+      },
+      "networkProfile": {
+        "networkInterfaces": [
+          {
+            "id": "[resourceId('Microsoft.Network/networkInterfaces',concat('nic', copyindex()))]"
+          }
+        ]
+      },
+      "osProfile": {
+        "adminPassword": "[parameters('adminPassword')]",
+        "adminUsername": "[parameters('adminUsername')]",
+        "computerName": "[concat('vm', copyIndex())]"
+      },
+      "dependsOn": [
+        "[concat('Microsoft.Network/networkInterfaces/', 'nic', copyindex())]",
+        "[concat('Microsoft.Storage/storageAccounts/', parameters('newStorageAccountName'))]"
+      ],
+      "properties": {
+        "availabilitySet": {
+          "id": "[resourceId('Microsoft.Compute/availabilitySets', variables('availabilitySetName'))]"
+        },
+        "hardwareProfile": {
+          "vmSize": "[parameters('vmSize')]"
         },
         "networkProfile": {
           "networkInterfaces": [
@@ -291,52 +308,29 @@
           ]
         },
         "osProfile": {
-          "adminPassword": "[parameters('adminPassword')]",
+          "computerName": "[concat('vm', copyIndex())]",
           "adminUsername": "[parameters('adminUsername')]",
-          "computerName": "[concat('vm', copyIndex())]"
+          "adminPassword": "[parameters('adminPassword')]"
         },
-        "dependsOn": [
-          "[concat('Microsoft.Network/networkInterfaces/', 'nic', copyindex())]",
-          "[concat('Microsoft.Storage/storageAccounts/', parameters('newStorageAccountName'))]"
-        ],
-        "properties": {
-          "availabilitySet": {
-            "id": "[resourceId('Microsoft.Compute/availabilitySets', variables('availabilitySetName'))]"
+        "storageProfile": {
+          "imageReference": {
+            "publisher": "[variables('imagePublisher')]",
+            "offer": "[variables('imageOffer')]",
+            "sku": "[parameters('imageSKU')]",
+            "version": "latest"
           },
-          "hardwareProfile": {
-            "vmSize": "[parameters('vmSize')]"
-          },
-          "networkProfile": {
-            "networkInterfaces": [
-              {
-                "id": "[resourceId('Microsoft.Network/networkInterfaces',concat('nic', copyindex()))]"
-              }
-            ]
-          },
-          "osProfile": {
-            "computerName": "[concat('vm', copyIndex())]",
-            "adminUsername": "[parameters('adminUsername')]",
-            "adminPassword": "[parameters('adminPassword')]"
-          },
-          "storageProfile": {
-            "imageReference": {
-              "publisher": "[variables('imagePublisher')]",
-              "offer": "[variables('imageOffer')]",
-              "sku": "[parameters('imageSKU')]",
-              "version": "latest"
-            },
-            "osDisk": {
-              "name": "osdisk",
-              "vhd": {
-                "uri": "[concat('http://',parameters('newStorageAccountName'),'.blob.core.windows.net/vhds/','osdisk', copyIndex(), '.vhd')]"
-              },
-              "caching": "ReadWrite",
-              "createOption": "FromImage"
+          "osDisk": {
+            "name": "osdisk",
+            "vhd": {
+              "uri": "[concat('http://',parameters('newStorageAccountName'),'.blob.core.windows.net/vhds/','osdisk', copyIndex(), '.vhd')]"
             },
             "caching": "ReadWrite",
             "createOption": "FromImage"
-          }
-        },
+          },
+          "caching": "ReadWrite",
+          "createOption": "FromImage"
+        }
       }
-      ]
+    }
+  ]
     }
