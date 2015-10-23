@@ -212,11 +212,11 @@
                 "id": "[variables('frontEndIPConfigID')]"
               },
               "protocol": "tcp",
-              "frontendPort": 50002,
+              "frontendPort": 50003,
               "backendPort": 3389,
               "enableFloatingIP": false
-            },
-          }
+            }
+          },
           {
             "name": "RDP-VM3",
             "properties": {
@@ -224,7 +224,7 @@
                 "id": "[variables('frontEndIPConfigID')]"
               },
               "protocol": "tcp",
-              "frontendPort": 50002,
+              "frontendPort": 50004,
               "backendPort": 3389,
               "enableFloatingIP": false
             }
@@ -236,7 +236,7 @@
                 "id": "[variables('frontEndIPConfigID')]"
               },
               "protocol": "tcp",
-              "frontendPort": 50002,
+              "frontendPort": 50005,
               "backendPort": 3389,
               "enableFloatingIP": false
             }
@@ -248,7 +248,7 @@
                 "id": "[variables('frontEndIPConfigID')]"
               },
               "protocol": "tcp",
-              "frontendPort": 50002,
+              "frontendPort": 50006,
               "backendPort": 3389,
               "enableFloatingIP": false
             }
