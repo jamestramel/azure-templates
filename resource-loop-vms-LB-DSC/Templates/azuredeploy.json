@@ -74,6 +74,11 @@
       "metadata": {
         "description": "DNS for Load Balancer IP"
       }
+    },
+    ,
+    "timestamp": {
+      "type": "string",
+      "defaultValue": "Unique String per ARM deployment"
     }
   },
   "variables": {
@@ -94,7 +99,6 @@
     "frontEndIPConfigID": "[concat(variables('lbID'),'/frontendIPConfigurations/LoadBalancerFrontEnd')]",
     "lbPoolID": "[concat(variables('lbID'),'/backendAddressPools/BackendPool1')]",
     "lbProbeID": "[concat(variables('lbID'),'/probes/tcpProbe')]",
-    "vmExtensionName": "WebServerDSC",
     "modulesUrl": "https://github.com/Azure/azure-quickstart-templates/raw/master/dsc-extension-azure-automation-pullserver/UpdateLCMforAAPull.zip ",
     "registrationUrl": "https://eus2-agentservice-prod-1.azure-automation.net/accounts/26a3b072-6033-4c7f-8859-aabb71815987",
     "nodeConfigurationName": "MyWebConfig.DSC",
@@ -205,7 +209,7 @@
               "enableFloatingIP": false
             }
           },
-         {
+          {
             "name": "RDP-VM2",
             "properties": {
               "frontendIPConfiguration": {
@@ -393,17 +397,25 @@
       "properties": {
         "publisher": "Microsoft.Powershell",
         "type": "DSC",
-        "typeHandlerVersion": "2.7",
+        "typeHandlerVersion": "2.6",
+        "protectedSettings": {
+          "Items": {
+            "registrationKeyPrivate": "[variables('registrationKey')]"
+          }
+        },
         "autoUpgradeMinorVersion": true,
         "settings": {
           "ModulesUrl": "[variables('modulesUrl')]",
           "SasToken": "",
           "ConfigurationFunction": "[variables('configurationFunction')]",
           "Properties": [
-           {
+            {
               "Name": "RegistrationKey",
-              "Value": "[variables('registrationKey')]",
-              "TypeName": "System.String"
+              "Value": {
+                "UserName": "PLACEHOLDER_DONOTUSE",
+                "Password": "PrivateSettingsRef:registrationKeyPrivate"
+              },
+              "TypeName": "System.Management.Automation.PSCredential"
             },
             {
               "Name": "RegistrationUrl",
@@ -444,10 +456,14 @@
               "Name": "AllowModuleOverwrite",
               "Value": "[variables('allowModuleOverwrite')]",
               "TypeName": "System.Boolean"
+            },
+            {
+              "Name": "Timestamp",
+              "Value": "[parameters('timestamp')]",
+              "TypeName": "System.String"
             }
           ]
-        },
-        "protectedSettings": null
+        }
       }
     }
   ]
