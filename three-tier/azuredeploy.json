@@ -90,7 +90,7 @@
     }
   },
   "variables": {
-	  "apiVersion": "2016-03-01",
+	"apiVersion": "2016-03-01",
     "hostingPlanName": "[concat('hostingplan', uniqueString(resourceGroup().id))]",
     "webSiteName": "[concat('webSite', uniqueString(resourceGroup().id))]",
     "sqlserverName": "[concat('sqlserver', uniqueString(resourceGroup().id))]",
@@ -140,7 +140,7 @@
           "properties": {
             "edition": "[parameters('edition')]",
             "collation": "[parameters('collation')]",
-            "maxSizeBytes": "[parameters('maxSizeBytes')]",
+            "maxSizeBytes": "[variables('maxSizeBytes')]",
             "requestedServiceObjectiveName": "[parameters('requestedServiceObjectiveName')]"
           }
         },
@@ -209,7 +209,7 @@
       ]
     },
     {
- 	"apiVersion": "[variables('apiVersion')]",
+ 	"apiVersion": "2016-03-01",
       "name": "[concat(variables('hostingPlanName'), '-', resourceGroup().name)]",
       "type": "Microsoft.Insights/autoscalesettings",
       "location": "[resourceGroup().location]",
@@ -277,14 +277,14 @@
         {
       "type": "Microsoft.Storage/storageAccounts",
       "name": "[variables('storageAccountName')]",
-      "apiVersion": "[variables('apiVersion')]",
+      "apiVersion": "2015-06-15",
       "location": "[resourceGroup().location]",
       "properties": {
         "accountType": "[variables('storageAccountType')]"
       }
     },
     {
-      "apiVersion": "[variables('apiVersion')]",
+      "apiVersion": "2015-06-15",
       "type": "Microsoft.Network/virtualNetworks",
       "name": "[variables('virtualNetworkName')]",
       "location": "[resourceGroup().location]",
