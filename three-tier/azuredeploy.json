@@ -33,7 +33,7 @@
     },
     "databaseName": {
       "type": "string",
-      "defaultValue": "sampledb",
+      "defaultValue": "PrimaWebDB",
       "metadata": {
         "description": "The name of the new database to create."
       }
@@ -91,9 +91,9 @@
   },
   "variables": {
 	"apiVersion": "2016-03-01",
-    "hostingPlanName": "[concat('hostingplan', uniqueString(resourceGroup().id))]",
-    "webSiteName": "[concat('webSite', uniqueString(resourceGroup().id))]",
-    "sqlserverName": "[concat('sqlserver', uniqueString(resourceGroup().id))]",
+    "hostingPlanName": "ARAHostingPlan",
+    "webSiteName": "PrimaWebApp",
+    "sqlserverName": "PrimaWebSQLServer",
      "maxSizeBytes": "1073741824",
     "storageAccountName": "arastorageaccount01",
     "imageSKU": "2012-Datacenter",
@@ -133,7 +133,7 @@
           "tags": {
             "displayName": "Database"
           },
- 			"apiVersion": "[variables('apiVersion')]",
+ 	 "apiVersion": "[variables('apiVersion')]",
           "dependsOn": [
             "[variables('sqlserverName')]"
           ],
@@ -146,7 +146,7 @@
         },
         {
           "type": "firewallrules",
- 			"apiVersion": "[variables('apiVersion')]",
+ 	 "apiVersion": "[variables('apiVersion')]",
           "dependsOn": [
             "[variables('sqlserverName')]"
           ],
