@@ -33,7 +33,7 @@
     },
     "databaseName": {
       "type": "string",
-      "defaultValue": "PrimaWebDB",
+      "defaultValue": "primawebdb",
       "metadata": {
         "description": "The name of the new database to create."
       }
@@ -93,7 +93,7 @@
 	"apiVersion": "2016-03-01",
     "hostingPlanName": "ARAHostingPlan",
     "webSiteName": "PrimaWebApp",
-    "sqlserverName": "PrimaWebSQLServer",
+    "sqlserverName": "primawebsqlsvr",
      "maxSizeBytes": "1073741824",
     "storageAccountName": "arastorageaccount01",
     "imageSKU": "2012-Datacenter",
