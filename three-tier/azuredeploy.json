@@ -90,7 +90,7 @@
     }
   },
   "variables": {
-	  "apiVersion": "2016-03-01"
+	  "apiVersion": "2016-03-01",
     "hostingPlanName": "[concat('hostingplan', uniqueString(resourceGroup().id))]",
     "webSiteName": "[concat('webSite', uniqueString(resourceGroup().id))]",
     "sqlserverName": "[concat('sqlserver', uniqueString(resourceGroup().id))]",
